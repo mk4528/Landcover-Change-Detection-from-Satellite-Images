@@ -16,7 +16,7 @@ landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy
 - Dr. Saba Rahimi from J.P. Morgan 
 
 ####  CA:
-- Katie
+- Katie Jooyoung Kim
 
 ####  Instructor:
-- Vivian
+- Vivian Zhang
