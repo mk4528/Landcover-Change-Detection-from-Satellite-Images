@@ -1,4 +1,4 @@
-# Automatic landcover change detection
+# Automatic Landcover Change Detection
 
 #### Project Objective
 - Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
