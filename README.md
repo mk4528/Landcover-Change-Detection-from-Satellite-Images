@@ -2,7 +2,7 @@
 
 ### Project Objective
 - Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
-landcover in year 2022 vs. year 2017). Specifically, we wish to detect the loss or gain of “tree canopy” land cover class.
+landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
 
 ####  Authors:
 + Ashkan Bozorgzad (ab5243)
