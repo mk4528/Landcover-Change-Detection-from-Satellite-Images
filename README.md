@@ -1,10 +1,10 @@
-# Automatic Landcover Change Detection
+# Landcover_Change_Detection
 
 #### Project Objective
 - Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
 landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
 
-####  Authors:
+####  Authors (Team Captain: TBD):
 + Ashkan Bozorgzad (ab5243)
 + Hari Prasad Renganathan (hr2514)
 + Karveandhan Palanisamy (kp2941)
