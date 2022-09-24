@@ -1,4 +1,4 @@
-# Landcover_Change_Detection
+# Landcover Change Detection from Satellite Images
 
 #### Project Objective
 - Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
@@ -19,4 +19,4 @@ landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy
 - Katie Jooyoung Kim
 
 ####  Instructor:
-- Vivian Zhang
+- Vivian S. Zhang
