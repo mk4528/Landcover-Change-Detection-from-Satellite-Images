@@ -4,7 +4,7 @@
 - Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
 landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
 
-####  Authors (Team Captain: TBD):
+####  Authors (Team Captain: Masataka Koga):
 + Ashkan Bozorgzad (ab5243)
 + Hari Prasad Renganathan (hr2514)
 + Karveandhan Palanisamy (kp2941)
@@ -13,7 +13,7 @@ landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy
 + Yuki Ikeda (yi2220)
 
 ####  Sponsor/Mentor:
-- Dr. Saba Rahimi from J.P. Morgan 
+- Dr. Saba Rahimi from J.P. Morgan
 
 ####  CA:
 - Katie Jooyoung Kim
