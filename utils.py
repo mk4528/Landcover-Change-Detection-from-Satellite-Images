@@ -1,8 +1,14 @@
 import pandas as pd 
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 from skimage import io
 import numpy as np
 import geopandas
+from tqdm import trange, tqdm
+import seaborn as sns
+import geopandas
+import os
+
 
 NLCD_CLASS = {
      0: "No Data",
@@ -24,6 +30,7 @@ NLCD_CLASS = {
     95: "Emergent Herbaceous Wetlands"
 }
 
+
 MAPPING = {
     "Water": [11],
     "Tree Canopy": [41, 42, 43, 52, 90, 95],
@@ -33,62 +40,20 @@ MAPPING = {
 }
 
 
-NLCD_IDX_TO_REDUCED_LC_MAP = np.array([
-    4,#  0 No data 0
-    0,#  1 Open Water
-    4,#  2 Ice/Snow
-    2,#  3 Developed Open Space
-    3,#  4 Developed Low Intensity
-    3,#  5 Developed Medium Intensity
-    3,#  6 Developed High Intensity
-    3,#  7 Barren Land
-    1,#  8 Deciduous Forest
-    1,#  9 Evergreen Forest
-    1,# 10 Mixed Forest
-    1,# 11 Shrub/Scrub
-    2,# 12 Grassland/Herbaceous
-    2,# 13 Pasture/Hay
-    2,# 14 Cultivated Crops
-    1,# 15 Woody Wetlands
-    1,# 16 Emergent Herbaceious Wetlands
-])
-
-
-def get_image_ndarray(csv_path, col, row):
-    df = pd.read_csv(csv_path)
-    a = io.imread(df.loc[row, col])
-    return a
-
-
-def display_image(csv_path, col, row):
-    """Display one tif image from csv file
+def read_nlcd_img_as_np(df, img_number: int, img_year: int):
+    """Read NLCD image given image number and year as np.ndarray
     
     Args:
-        csv_path: the path to the csv data file
-        col: str, the name of the column
-        row: int, row number
-
-    Example:
-        display_image("data/splits/val_inference_both.csv", "label_fn", 3)
-    """
-    a = get_image_ndarray(csv_path, col, row)
-    plt.imshow(a)
-    plt.show()
-
-
-def get_tif_dimension(csv_path, col, row):
-    """Get the dimension of a TIF image
+        df: a dataframe that contains the url to the TIF image
+        img_number: int, 3716
+        img_year: int, 2013/2016
     
-    Args:
-        csv_path: the path to the csv data file
-        col: str, the column name 
-        row: int, the row number
-
     Returns:
-        the dimension of the TIF image
+        np.ndarray
     """
-    a = get_image_ndarray(csv_path, col, row)
-    return a.shape
+    for i in range(len(df)):
+        if f"{img_number}_nlcd-{img_year}" in df.loc[i, "label_fn"]:
+            return io.imread(df.loc[i, "label_fn"])
 
 
 def get_percentages(geojson_path) -> dict:
@@ -105,6 +70,221 @@ def get_percentages(geojson_path) -> dict:
     return res
 
 
+def get_dist(img, pixel2label: dict, classes: list) -> dict:
+    """Calculate class percentages, super fast
+    
+    Args:
+        img: numpy.ndarray
+        pixel2label: mapping of pixel: class labels
+        classes: a list of classes, for example 
+            ["Water", "Impervious", "Tree Canopy", "Low Vegetation"]
+    
+    Returns:
+        1. dict: {"Water": 0.xx, "Impervious": 0.xx, ...}
+        2. dict only restricts to pixels whose labels changed from old year to 
+            new year
+    """
+    res = {k: 0 for k in classes}
+    unique_pixels = np.unique(img)
+    pixesl_counts = np.bincount(img.flatten())
+    for p in unique_pixels:
+        label = pixel2label[p]
+        res[label] += pixesl_counts[p]
+
+    sum1 = sum(res.values())
+    for k, v in res.items():
+        res[k] = v / sum1
+    return res
+
+
+def get_dist_diffpixel(old_img, new_img, pixel2label: dict, classes: list) -> dict:
+    """Calculate class percentages, super fast
+    
+    Args:
+        old_img: numpy.ndarray
+        new_img: numpy.ndarray
+        pixel2label: mapping of pixel: class labels
+        classes: a list of classes, for example 
+            ["Water", "Impervious", "Tree Canopy", "Low Vegetation"]
+    
+    Returns:
+        dict only restricts to pixels whose labels changed from old year to new year
+    """
+    res = {k: 0 for k in classes}
+    # making a new array comparing the pixels
+    compare = old_img != new_img
+    old_img_diff = old_img * compare
+    unique_pixels = np.unique(old_img_diff)
+    pixels_counts = np.bincount(old_img_diff.flatten())
+    for p in unique_pixels:
+        if p != 0:
+            label = pixel2label[p]
+            res[label] += pixels_counts[p]
+
+    sum1 = sum(res.values())
+    for k, v in res.items():
+        res[k] = v / sum1
+    return res
+
+
+def find_distribution_change(old_img, new_img, pixel2label: dict, classes: list) -> dict:
+    """Find distribution of change in classes from 2013 to 2016
+    
+    Args:
+        old_img: np.ndarray
+        new_img: np.ndarray
+        pixel2label: dict of pixel: label
+        classes: list of class labels
+    
+    Returns:
+        1. a dict of dict that looks like 
+            {"Water": {
+                "Water": 0.xxxx,
+                "Tree Canopy": 0.xxxx,
+                ...,
+            },...}
+        2. same dict but restricted to pixels whose values changed
+    """
+    dist_change = {k: {m: 0 for m in classes} for k in classes}
+    dist_change_diff = {k: {m: 0 for m in classes} for k in classes}
+    for i in trange(old_img.shape[0]):
+        for j in range(old_img.shape[1]):
+            label_2013 = pixel2label[old_img[i][j]]
+            label_2016 = pixel2label[new_img[i][j]]
+            dist_change[label_2013][label_2016] += 1
+            if label_2013 != label_2016:
+                dist_change_diff[label_2013][label_2016] += 1
+
+    for k in dist_change.keys():
+        sum_value = sum(dist_change[k].values())
+        for m in dist_change[k].keys():
+            dist_change[k][m] /= sum_value
+            
+    for k in dist_change_diff.keys():
+        sum_value = sum(dist_change_diff[k].values()) - dist_change_diff[k][k]
+        for m in dist_change_diff[k].keys():
+            if sum_value == 0:
+                dist_change_diff[k][m] = 0
+            else:
+                dist_change_diff[k][m] /= sum_value
+    
+    return dist_change, dist_change_diff
+        
+
+def create_direct_map() -> dict:
+    """Create a mapping of NLCD pixel value: class labels
+    e.g. 11: 'Water'. """
+    res = {}
+    for k in NLCD_CLASS.keys():
+        for m, n in MAPPING.items():
+            if k in n:
+                res[k] = m
+    return res
+
+
+def get_percentages(geojson_path) -> dict:
+    gdf = geopandas.read_file(geojson_path)
+    gdf = gdf.to_crs("EPSG:3395")
+    gdf["area (sq meters)"] = gdf.area
+    total_area = gdf['area (sq meters)'].sum()
+    all_classes = gdf['default'].unique()
+    res = {}
+    for c in all_classes:
+        gdf_sub = gdf.loc[gdf['default'] == c]
+        sub_class_area_perc = gdf_sub['area (sq meters)'].sum() / total_area
+        res[c] = sub_class_area_perc
+    return res
+
+
+def plot_bars(dist_left: dict, dist_right: dict, 
+              labels: list, title: str, output_path: str) -> None:
+    """Make bar plots 
+    
+    Args:
+        dist_left: distribution on the left in the bar plot
+        dist_right: ... on the right in the bar plot
+        labels: a list of names, for example ["NLCD", "high-res"]
+        title: title of the image
+        classes: list of classes
+        output_path: e.g. "xxx.png"
+    """
+    df = pd.DataFrame.from_records([dist_left, dist_right], 
+                                    index=labels)
+    df = df.reset_index().rename(columns={"index": "Annotation"})
+    df = df.melt(id_vars=["Annotation"], 
+                 value_vars=list(dist_left.keys()), 
+                 var_name="Class", value_name="Percentage")
+    df["Percentage"] = df["Percentage"] * 100
+    # round to 4 decimal places
+    df = df.round({"Percentage": 4})
+    ax = sns.barplot(data=df, x="Class", y="Percentage", hue="Annotation")
+    ax.set_title(title)
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+    # add texts above bars
+    ax.bar_label(ax.containers[0], fontsize=9)
+    ax.bar_label(ax.containers[1], fontsize=9)
+    # iterate over the texts and format to percentages
+    for t in ax.texts: 
+        t.set_text(f"{float(t.get_text()):.2f}%")
+    plt.savefig(f"{output_path}",bbox_inches='tight')
+
+
+def plot_heatmaps(dist_old: dict, distribution_change: dict, 
+                  classes: list, title: str, xlabel: str, ylabel: str, figname: str) -> None:
+    """Plot heatmaps of class distributions in 2013 vs 2017 and save the image. """
+    index_col = []
+    for c in classes:
+        index_col.append(f"{c} ({dist_old[c] * 100:.2f}%)")
+
+    heatmap_df = pd.DataFrame.from_records(data=[{m: distribution_change[k][m] for m in classes} for k in classes], 
+                                           index=index_col)
+    heatmap_df = heatmap_df * 100
+    heatmap_df = heatmap_df.round(1)
+    
+    # plot heatmap
+    ax = sns.heatmap(heatmap_df, annot=True, cmap="YlGnBu")
+    # set the colorbar to percentage format
+    cbar = ax.collections[0].colorbar
+    cbar.ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+    
+    # iterate over the texts and format to percentages
+    for t in ax.texts: 
+        t.set_text(f"{float(t.get_text())}%")
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.savefig(figname, bbox_inches='tight')
+
+
+def plot_heatmaps_no_diagonal(dist_old: dict, distribution_change: dict, 
+                              classes: list, title: str, xlabel: str, ylabel: str, figname: str) -> None:
+    # construct the index column
+    index_col = []
+    for c in classes:
+        index_col.append(f"{c} ({dist_old[c] * 100:.2f}%)")
+        
+    heatmap_df = pd.DataFrame.from_records(data=[{m: distribution_change[k][m] for m in classes} for k in classes], 
+                                           index=index_col)
+    heatmap_df = heatmap_df * 100
+    heatmap_df = heatmap_df.round(1)
+    
+    # plot heatmap
+    mask = np.eye(len(heatmap_df))
+    ax = sns.heatmap(heatmap_df, annot=True, cmap="YlGnBu", mask=mask)
+    # set the colorbar to percentage format
+    cbar = ax.collections[0].colorbar
+    cbar.ax.yaxis.set_major_formatter(mtick.PercentFormatter())
+    
+    # iterate over the texts and format to percentages
+    for t in ax.texts: 
+        t.set_text(f"{float(t.get_text())}%")
+    ax.set_title(title)
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+    plt.savefig(figname, bbox_inches='tight')
+
+
+# borrowed from Masa and Yuki
 def store_np_and_png(nlcd_path, hr_label_path, output_path, image_id_year):
     """
     Please export the high-res label(s) from GroundWork using "export data" tab.
