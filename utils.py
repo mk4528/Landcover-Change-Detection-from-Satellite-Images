@@ -1,13 +1,13 @@
+from re import S
 import pandas as pd 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 from skimage import io
 import numpy as np
 import geopandas
-from tqdm import trange, tqdm
+from tqdm import trange
 import seaborn as sns
 import geopandas
-import os
 
 
 NLCD_CLASS = {
@@ -111,15 +111,10 @@ def get_dist_diffpixel(old_img, new_img, pixel2label: dict, classes: list) -> di
         dict only restricts to pixels whose labels changed from old year to new year
     """
     res = {k: 0 for k in classes}
-    # making a new array comparing the pixels
-    compare = old_img != new_img
-    old_img_diff = old_img * compare
+    old_img_diff = old_img[old_img!=new_img]
     unique_pixels = np.unique(old_img_diff)
-    pixels_counts = np.bincount(old_img_diff.flatten())
     for p in unique_pixels:
-        if p != 0:
-            label = pixel2label[p]
-            res[label] += pixels_counts[p]
+        res[pixel2label[p]] += sum(old_img_diff==p)
 
     sum1 = sum(res.values())
     for k, v in res.items():
@@ -127,48 +122,44 @@ def get_dist_diffpixel(old_img, new_img, pixel2label: dict, classes: list) -> di
     return res
 
 
-def find_distribution_change(old_img, new_img, pixel2label: dict, classes: list) -> dict:
-    """Find distribution of change in classes from 2013 to 2016
-    
-    Args:
-        old_img: np.ndarray
-        new_img: np.ndarray
-        pixel2label: dict of pixel: label
-        classes: list of class labels
-    
-    Returns:
-        1. a dict of dict that looks like 
-            {"Water": {
-                "Water": 0.xxxx,
-                "Tree Canopy": 0.xxxx,
-                ...,
-            },...}
-        2. same dict but restricted to pixels whose values changed
+def find_dist_change(old_img, new_img, pixel2label: dict, classes: list) -> dict:
+    """Find distribution change in classes from 2013 to 2016 
+    figure out for all the pixels in old_img, what have they changed to in new img
     """
     dist_change = {k: {m: 0 for m in classes} for k in classes}
-    dist_change_diff = {k: {m: 0 for m in classes} for k in classes}
-    for i in trange(old_img.shape[0]):
-        for j in range(old_img.shape[1]):
-            label_2013 = pixel2label[old_img[i][j]]
-            label_2016 = pixel2label[new_img[i][j]]
-            dist_change[label_2013][label_2016] += 1
-            if label_2013 != label_2016:
-                dist_change_diff[label_2013][label_2016] += 1
-
+    unique_old = np.unique(old_img)
+    for p in unique_old:
+        new_class_ary = new_img[old_img==p]
+        unique_new = np.unique(new_class_ary)
+        for q in unique_new:
+            dist_change[pixel2label[p]][pixel2label[q]] += sum(new_class_ary==q)
+            
     for k in dist_change.keys():
         sum_value = sum(dist_change[k].values())
         for m in dist_change[k].keys():
             dist_change[k][m] /= sum_value
-            
-    for k in dist_change_diff.keys():
-        sum_value = sum(dist_change_diff[k].values()) - dist_change_diff[k][k]
-        for m in dist_change_diff[k].keys():
+
+    return dist_change
+
+
+def find_dist_change_restricted(old_img, new_img, pixel2label: dict, classes: list) -> dict:
+    dist_change = {k: {m: 0 for m in classes} for k in classes}
+    unique_old = np.unique(old_img)
+    for p in unique_old:
+        new_class_ary = new_img[(old_img!=new_img)&(old_img==p)]
+        unique_new_pixels = np.unique(new_class_ary)
+        for q in unique_new_pixels:
+            dist_change[pixel2label[p]][pixel2label[q]] += sum(new_class_ary==q)
+
+    for k in dist_change.keys():
+        sum_value = sum(dist_change[k].values()) - dist_change[k][k]
+        for m in dist_change[k].keys():
             if sum_value == 0:
-                dist_change_diff[k][m] = 0
+                dist_change[k][m] = 0
             else:
-                dist_change_diff[k][m] /= sum_value
+                dist_change[k][m] /= sum_value
     
-    return dist_change, dist_change_diff
+    return dist_change
         
 
 def create_direct_map() -> dict:
