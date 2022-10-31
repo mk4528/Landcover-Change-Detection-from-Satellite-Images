@@ -1,4 +1,3 @@
-from re import S
 import pandas as pd 
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -7,7 +6,6 @@ import numpy as np
 import geopandas
 from tqdm import trange
 import seaborn as sns
-import geopandas
 
 
 NLCD_CLASS = {
