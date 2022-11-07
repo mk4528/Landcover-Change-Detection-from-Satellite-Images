@@ -4,3 +4,4 @@ __pycache__
 logs
 TIFnumpy
 NAIP_NLCD_train_2013
+libssl.so
