@@ -27,8 +27,8 @@ train_input_size = 256
 train_stride = 256
 train_sample = 2000
 train_seed = 100
-train_batch_size = 32
-train_epochs = 100
+train_batch_size = 4
+train_epochs = 50
 
 model_save_dir="./checkpoints"
 
@@ -528,3 +528,24 @@ def remap_NLCD_labels() -> dict:
     return res
 
 nlcd_2_int_mapping = remap_NLCD_labels()
+
+# NLCD soft labels
+# based on the paper
+# in order - W, TC, LV, I
+nlcd_softmap = {
+    11: [0.98, 0.02, 0.0, 0.0],
+    21: [0.0, 0.39, 0.49, 0.12],
+    22: [0.0, 0.31, 0.34, 0.35],
+    23: [0.01, 0.13, 0.22, 0.64],
+    24: [0, 0.03, 0.07, 0.9],
+    31: [0.05, 0.13, 0.43, 0.4],
+    41: [0, 0.93, 0.05, 0],
+    42: [0, 0.95, 0.04, 0],
+    43: [0, 0.92, 0.07, 0],
+    52: [0, 0.58, 0.38, 0.04],
+    71: [0.01, 0.23, 0.54, 0.22],
+    81: [0, 0.12, 0.83, 0.03],
+    82: [0, 0.05, 0.92, 0.01],
+    90: [0.0, 0.94, 0.05, 0],
+    95: [0.08, 0.86, 0.05, 0]
+}
