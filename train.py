@@ -26,13 +26,13 @@ if __name__ == "__main__":
     
     # input shape (batch, 256, 256, 4)
     # output shape (batch, 256, 256, 5)
-    fcnModel = model.FCN(utils.train_input_size, len(utils.MAPPING))
+    fcnModel = model.FCN(utils.train_input_size, 4)
     fcnModel.compile(
         optimizer='adam', 
         loss=tf.keras.losses.CategoricalCrossentropy(), # need to use categorical entropy
         metrics=["accuracy", 
                  tf.keras.metrics.AUC(),
-                 tf.keras.metrics.MeanIoU(num_classes=5, sparse_y_true=False, sparse_y_pred=False),]
+                 tf.keras.metrics.MeanIoU(num_classes=4, sparse_y_true=False, sparse_y_pred=False),]
     )
 
     print(fcnModel.summary())
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         validation_steps=res["val_size"] // utils.train_batch_size
     )
     
-    fcnModel.save("./checkpoints/FCN_model.h5")
+    fcnModel.save("./checkpoints/FCN_softlabeled_model.h5")
     
     # unetModel = model.UNet((utils.train_input_size, utils.train_input_size, 4), len(utils.MAPPING))
     

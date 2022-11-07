@@ -10,6 +10,15 @@ def nlcd_preprocess(img):
     return np.vectorize(remapper)(img)
 
 
+# def nlcd_preprocess_soft_label(img):
+#     img = img.reshape((img.shape[0], img.shape[1]))
+#     res = []
+#     for i in range(img.shape[0]):
+#         for j in range(img.shape[1]):
+#             res.append(utils.nlcd_softmap[img[i][j]]) # because it's 3D (256, 256, 1)
+#     return np.array(res).reshape(img.shape[0], img.shape[1], 4)
+    
+
 def get_customized_gen(naip_gen, nlcd_gen):
     while True:
         naip_im = next(naip_gen)
@@ -20,6 +29,17 @@ def get_customized_gen(naip_gen, nlcd_gen):
         yield naip_im, nlcd_im
 
 
+def get_softlabeled_gen(naip_gen, nlcd_gen):
+    while True:
+        naip_batch = next(naip_gen)
+        nlcd_batch = next(nlcd_gen) # one batch
+        batch_size, h, w, c = nlcd_batch.shape
+        # https://stackoverflow.com/questions/3379301/using-numpy-vectorize-on-functions-that-return-vectors
+        # because there are four classes as soft labels
+        temp = np.vectorize(lambda x: utils.nlcd_softmap[x], signature='()->(n)')(nlcd_batch).reshape(batch_size, h, w, 4)
+        yield naip_batch, temp
+    
+
 def create_train_val_dataset():
     naip_gen = ImageDataGenerator(
         horizontal_flip=True,
@@ -29,7 +49,6 @@ def create_train_val_dataset():
     )
     
     nlcd_gen = ImageDataGenerator(
-        preprocessing_function=nlcd_preprocess,
         validation_split=0.2,
     )
     
@@ -78,8 +97,8 @@ def create_train_val_dataset():
     )
     
     return {
-        "train_gen": get_customized_gen(naip_2013_gen_train, nlcd_2013_gen_train),
+        "train_gen": get_softlabeled_gen(naip_2013_gen_train, nlcd_2013_gen_train),
         "train_size": len(naip_2013_gen_train),
-        "val_gen": get_customized_gen(naip_2013_gen_val, nlcd_2013_gen_val),
+        "val_gen": get_softlabeled_gen(naip_2013_gen_val, nlcd_2013_gen_val),
         "val_size": len(naip_2013_gen_val)
     }

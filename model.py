@@ -1,26 +1,50 @@
 from tensorflow import keras
-from keras.layers import Conv2D, BatchNormalization
+from keras.layers import Conv2D, BatchNormalization, MaxPooling2D
 
 
 def FCN(input_size, classes):
     """ref: https://colab.research.google.com/drive/1VgwnN7jf-eZ12BaoyiuIKrqeWWprU7Nq?usp=sharing"""
     inputs = keras.Input(shape=(input_size, input_size, 4))
     x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="gelu")(inputs)
+    x = BatchNormalization()(x)    
+    
+    x = Conv2D(filters=32, kernel_size=3, strides=1, padding="same", activation="relu")(x)
     x = BatchNormalization()(x)
     
-    x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="relu")(x)
+    x = Conv2D(filters=64, kernel_size=3, strides=1, padding="same", activation="relu")(x)
     x = BatchNormalization()(x)
     
-    x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="relu")(x)
+    x = Conv2D(filters=64, kernel_size=3, strides=1, padding="same", activation="relu")(x)
     x = BatchNormalization()(x)
     
-    x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="relu")(x)
+    x = Conv2D(filters=128, kernel_size=3, strides=1, padding="same", activation="gelu")(x)
     x = BatchNormalization()(x)
     
-    x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="gelu")(x)
+    outputs = Conv2D(filters=classes, kernel_size=1, strides=1, padding="same", activation="softmax")(x)
+    
+    model = keras.Model(inputs=inputs, outputs=outputs, name="FCN")
+    return model
+
+
+def FCN_soft_label(input_size, classes):
+    """ref: https://colab.research.google.com/drive/1VgwnN7jf-eZ12BaoyiuIKrqeWWprU7Nq?usp=sharing"""
+    inputs = keras.Input(shape=(input_size, input_size, 4))
+    x = Conv2D(filters=16, kernel_size=3, strides=1, padding="same", activation="gelu")(inputs)
+    x = BatchNormalization()(x)    
+    
+    x = Conv2D(filters=32, kernel_size=3, strides=1, padding="same", activation="relu")(x)
     x = BatchNormalization()(x)
     
-    outputs = Conv2D(filters=classes, kernel_size=1, strides=1, padding="same")(x)
+    x = Conv2D(filters=64, kernel_size=3, strides=1, padding="same", activation="relu")(x)
+    x = BatchNormalization()(x)
+    
+    x = Conv2D(filters=64, kernel_size=3, strides=1, padding="same", activation="relu")(x)
+    x = BatchNormalization()(x)
+    
+    x = Conv2D(filters=128, kernel_size=3, strides=1, padding="same", activation="gelu")(x)
+    x = BatchNormalization()(x)
+    
+    outputs = Conv2D(filters=classes, kernel_size=1, strides=1, padding="same", activation="softmax")(x)
     
     model = keras.Model(inputs=inputs, outputs=outputs, name="FCN")
     return model
