@@ -1,2 +1,6 @@
 TIFimages
 .ipynb_checkpoints
+__pycache__
+logs
+TIFnumpy
+NAIP_NLCD_train_2013

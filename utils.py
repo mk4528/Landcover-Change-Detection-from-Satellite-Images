@@ -8,6 +8,30 @@ from tqdm import trange
 import seaborn as sns
 
 
+train_naip_nlcd_both = "./data/splits/training_set_naip_nlcd_both.csv"
+train_naip_nlcd_2013 = "./data/splits/training_set_naip_nlcd_2013.csv"
+naip_2013_tifs = "TIFimages/NAIP_2013"
+naip_2017_tifs = "TIFimages/NAIP_2017"
+nlcd_2013_tifs = "TIFimages/NLCD_2013"
+nlcd_2016_tifs = "TIFimages/NLCD_2016"
+
+# need a subdirectory for ImageDataGenerator to work
+naip_train2013 = "NAIP_NLCD_train_2013/NAIP/img"
+nlcd_train2013 = "NAIP_NLCD_train_2013/NLCD/img"
+
+# dirs for ImageDataGenerator to work
+naip_datagen_train2013 = "NAIP_NLCD_train_2013/NAIP"
+nlcd_datagen_train2013 = "NAIP_NLCD_train_2013/NLCD"
+
+train_input_size = 256
+train_stride = 256
+train_sample = 2000
+train_seed = 100
+train_batch_size = 32
+train_epochs = 100
+
+model_save_dir="./checkpoints"
+
 NLCD_CLASS = {
      0: "No Data",
     11: "Open Water",
@@ -482,3 +506,25 @@ def store_np_and_png(nlcd_path, hr_label_path, output_path, image_id_year):
 
     image.save(output_path + "image_rgb-" + image_id_year + '.png')
     image.save(output_path + "image_gray-" + image_id_year + '.png')
+    
+
+# A mapping of NLCD categories to integers
+# categories are constrained to only 5 classes
+# "Water", "Tree Canopy", "Impervious", ...
+# {11: "Water", ...}
+DIRECT_MAP = create_direct_map()
+
+
+def remap_NLCD_labels() -> dict:
+    """remap NLCD labels from 17 classes to 5 classes (0 - 4)
+    
+    Args:
+        a mapping from int to int
+    """
+    mapping_remapped = {k: i for i, k in enumerate(MAPPING.keys())}
+    res = {}
+    for k in DIRECT_MAP.keys():
+        res[k] = mapping_remapped[DIRECT_MAP[k]]
+    return res
+
+nlcd_2_int_mapping = remap_NLCD_labels()
