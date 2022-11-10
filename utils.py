@@ -18,10 +18,12 @@ nlcd_2016_tifs = "TIFimages/NLCD_2016"
 # need a subdirectory for ImageDataGenerator to work
 naip_train2013 = "NAIP_NLCD_train_2013/NAIP/img"
 nlcd_train2013 = "NAIP_NLCD_train_2013/NLCD/img"
+nlcd_train2013_soft = "NAIP_NLCD_train_2013/NLCDsoftlabel/img"
 
 # dirs for ImageDataGenerator to work
 naip_datagen_train2013 = "NAIP_NLCD_train_2013/NAIP"
 nlcd_datagen_train2013 = "NAIP_NLCD_train_2013/NLCD"
+nlcd_datagen_train2013_softlabel = "NAIP_NLCD_train_2013/NLCDsoftlabel/"
 
 train_input_size = 256
 train_stride = 256
@@ -323,7 +325,6 @@ def store_np_and_png(nlcd_path, hr_label_path, output_path, image_id_year):
                 Note that these are the same with Codalab https://codalab.lisn.upsaclay.fr/competitions/7908). Use this to test our models
     """
     import sys
-    from osgeo import gdal,ogr,osr
     import matplotlib.pyplot as plt
     from PIL import Image, ImageDraw
     import json

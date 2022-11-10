@@ -1,22 +1,21 @@
-# Automatic Landcover Change Detection and Classification from Satellite Images
+### 1. Create Training Slices
 
-#### Project Objective
-- Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
-landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
+Modify `train_sample` in `utils.py` to specify training sample size, make sure the directories such as `naip_2017_tifs` contain the right .tif images. Then
 
-####  Authors (Team Captain: Masataka Koga):
-+ Ashkan Bozorgzad (ab5243)
-+ Hari Prasad Renganathan (hr2514)
-+ Karveandhan Palanisamy (kp2941)
-+ Masataka Koga (mk4528)
-+ Yewen Zhou (yz4175)
-+ Yuki Ikeda (yi2220)
+```
+python create_slices.py
+```
 
-####  Sponsor/Mentor:
-- Dr. Saba Rahimi from J.P. Morgan
+which will create `train_sample` number of slices in the directory `utils.naip_train2013` and `utils.nlcd_train2013`
 
-####  CA:
-- Katie Jooyoung Kim
+### 2. (Optional) Create NLCD Soft Labels
 
-####  Instructor:
-- Vivian S. Zhang
+```
+python convert_to_softlabel.py
+```
+
+It will read in the slices of NLCD labels, convert them to soft labels, and save to PNG images. 
+Warning: it will take a relatively long time to run (8 mins for 2000 samples)
+
+
+
