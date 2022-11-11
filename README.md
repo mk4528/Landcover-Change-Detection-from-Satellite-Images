@@ -1,22 +1,13 @@
-# Automatic Landcover Change Detection and Classification from Satellite Images
+# Downloading dynamic world labels corresponding to each NLCD label from Google Earth Engine python API
 
-#### Project Objective
-- Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as
-landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
+#### Get_Coords_of_NLCD.ipynb
+- It is made to run on Google Colabolatory
+  https://colab.research.google.com/drive/1yG2grTW85cl2E2nsRiaMoEC3pmAIoPkP?usp=sharing
+- You need to upload [training_set_naip_nlcd_both.csv](https://github.com/calebrob6/dfc2021-msd-baseline/blob/master/data/splits/training_set_naip_nlcd_both.csv) to Google drive mounted by Google Colab
+- The output is list `coors` which is to be saved as pickle format
+  
 
-####  Authors (Team Captain: Masataka Koga):
-+ Ashkan Bozorgzad (ab5243)
-+ Hari Prasad Renganathan (hr2514)
-+ Karveandhan Palanisamy (kp2941)
-+ Masataka Koga (mk4528)
-+ Yewen Zhou (yz4175)
-+ Yuki Ikeda (yi2220)
-
-####  Sponsor/Mentor:
-- Dr. Saba Rahimi from J.P. Morgan
-
-####  CA:
-- Katie Jooyoung Kim
-
-####  Instructor:
-- Vivian S. Zhang
+####  DL_DW_to_GDrive_bandonly_or_probbands.ipynb
+- It is made to run on your local environment to export dynamic world labels from GEE to Google Drive using GEE python API
+- It uses list `coors` outputted from the above notebook as input
+- Though submitting tasks might not take for a long time, it takes hours to export all 2250 dynamic world labels from GEE
