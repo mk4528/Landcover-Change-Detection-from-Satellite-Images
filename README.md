@@ -4,6 +4,11 @@
 
 Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
 
+## Data
+
+* `training_set_naip_nlcd_both.csv`: consists of 4,500 high-resolution NAIP (see [here](pdfs/naip_info_sheet_2013.pdf) for more info) 1mx1m images and corresponding low-resolution NLCD (see [here](https://www.usgs.gov/centers/eros/science/national-land-cover-database) for more info) labels
+
+
 
 ## Training and Evaluation
 
@@ -36,19 +41,19 @@ You can get result images in your `OUTPUT_IMAGE_DIRECTORY` and a zip file for su
 
 ## Incorporating Dynamic World Labels
 
-The code resides in `./DW` directory. The instruction to run the codes are as follows: 
+The code resides in `DW` directory. The instruction to run the codes are as follows: 
 
 1. Train 5-layer FCN model on each data below augmented w.r.t. brightness (Input: Dynamic World labels (probability bands), coors.txt, training_set_naip_nlcd_2017.csv, NAIP test images, high-resolution test labels, Output: torch weights of trained model as .pt file)
 
-    1. `./DW/DAug_NLCDonly_git.ipynb`: NLCD 2016
-    2. `./DW/DAug_DWonly_softlabel_git.ipynb`: DW2017 (hard label)
-    3. `./DW/DAug_DWonly_probs_git.ipynb`: DW2017 (soft label)
+    1. `DW/DAug_NLCDonly_git.ipynb`: NLCD 2016
+    2. `DW/DAug_DWonly_softlabel_git.ipynb`: DW2017 (hard label)
+    3. `DW/DAug_DWonly_probs_git.ipynb`: DW2017 (soft label)
 
 The links need to be modified first. You need Dynamic World labels (probability bands) downloaded and `coors.txt` outputted by the other notebooks for Google Earth Engine. They can be run using T4, P100, V100 or A100 GPU with high memory setting on Google Colab
 
 2. Make submission zip file to Codalab (Input: 5-layer FCN model trained (not limited to above), Output: Submission zip file to Codalab)
 
-The notebook is `./DW/model2Codalab_git.ipynb`
+The notebook is `DW/model2Codalab_git.ipynb`
 
 You need to modify the links to the model you trained. You can specify `SPL_WH`, i.e. the input height/width of the model (it does not have to be always 388. This is important because the input size of U-net is restricted to be multiples of eight). You can also change the model class. This can be run using T4, P100, V100 or A100 GPU with high memory setting on Google Colab
 
