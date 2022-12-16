@@ -20,6 +20,11 @@ Establish a semantic segmentation model in a specific study area describing land
 
 * Reference Paper
 
+## EDA
+
+To perform EDA on the data, modify paths in notebooks under `EDA/`, then run `EDA/EDA_Hari.ipynb` or `EDA/EDA_yewen.ipynb`
+
+
 ## Training and Evaluation
 
 In the following order, you can run codes for training and evaluating models, including the ensemble model, in `Main_verXX.ipynb` on Google Colab with an A-100 40GB GPU. If you want to run them on another environment including GPU type, you need to modify codes in the 4th and 5th cells mainly (also one in the 7th cell if needed).
