@@ -10,13 +10,13 @@ def nlcd_preprocess(img):
     return np.vectorize(remapper)(img)
 
 
-# def nlcd_preprocess_soft_label(img):
-#     img = img.reshape((img.shape[0], img.shape[1]))
-#     res = []
-#     for i in range(img.shape[0]):
-#         for j in range(img.shape[1]):
-#             res.append(utils.nlcd_softmap[img[i][j]]) # because it's 3D (256, 256, 1)
-#     return np.array(res).reshape(img.shape[0], img.shape[1], 4)
+def nlcd_preprocess_soft_label(img):
+    img = img.reshape((img.shape[0], img.shape[1]))
+    res = []
+    for i in range(img.shape[0]):
+        for j in range(img.shape[1]):
+            res.append(utils.nlcd_softmap[img[i][j]]) # because it's 3D (256, 256, 1)
+    return np.array(res).reshape(img.shape[0], img.shape[1], 4)
     
 
 def get_customized_gen(naip_gen, nlcd_gen):
