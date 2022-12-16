@@ -8,7 +8,17 @@ Establish a semantic segmentation model in a specific study area describing land
 
 * `training_set_naip_nlcd_both.csv`: consists of 4,500 high-resolution NAIP (see [here](pdfs/naip_info_sheet_2013.pdf) for more info) 1mx1m images and corresponding low-resolution NLCD (see [here](https://www.usgs.gov/centers/eros/science/national-land-cover-database) for more info) labels
 
+## Reports
 
+* [1st progress report](pdfs/1st_report.pdf)
+
+* [Abstract](pdfs/Abstract.pdf)
+
+* [Poster](pdfs/Poster.pdf)
+
+* Final Report
+
+* Reference Paper
 
 ## Training and Evaluation
 
