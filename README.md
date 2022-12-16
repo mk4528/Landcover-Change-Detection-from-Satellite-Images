@@ -56,6 +56,8 @@ You can get result images in your `OUTPUT_IMAGE_DIRECTORY` and a zip file for su
 
 ## Incorporating Dynamic World Labels
 
+* [Instructions](DW/instructions.md)
+
 The code resides in `DW` directory. The instruction to run the codes are as follows: 
 
 1. Train 5-layer FCN model on each data below augmented w.r.t. brightness (Input: Dynamic World labels (probability bands), coors.txt, training_set_naip_nlcd_2017.csv, NAIP test images, high-resolution test labels, Output: torch weights of trained model as .pt file)
