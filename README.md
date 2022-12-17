@@ -38,6 +38,7 @@ In the following order, you can run codes for training and evaluating models, in
 4. Set `RENEW_TRAIN_DATASET_FLAG`, `RENEW_TEST_DATASET_FLAG`, and `CODALAB_NAIP_DOWNLOAD_FLAG = True` in the 5th cell at the first running (After the first running, you can choose them as you want)
 
 5. Do a. or b.
+
     a. If you want to train and evaluate a single model not an ensemble model, including the chained model, set `TRAIN_ENSEMBLE_FLAG = False`
 
     b. If you want to train an ensemble model, set `TRAIN_ENSEMBLE_FLAG = True`, `ENSEMBLE_ID = 0`, and `EVALUATE_ENSEMBLE_FLAG = False`
