@@ -1,4 +1,4 @@
-# Downloading dynamic world labels corresponding to each NLCD label from Google Earth Engine python API
+# Automatic Landcover Change Detection and Classification from Satellite Images
 
 ## Project Objective
 
