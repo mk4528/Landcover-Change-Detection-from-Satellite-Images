@@ -18,7 +18,7 @@ Establish a semantic segmentation model in a specific study area describing land
 
 * Final Report
 
-* Reference Paper
+* [Reference Paper](pdfs/reference_paper.pdf)
 
 ## EDA
 
