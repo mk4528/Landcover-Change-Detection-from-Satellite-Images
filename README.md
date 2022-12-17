@@ -56,7 +56,7 @@ You can get result images in your `OUTPUT_IMAGE_DIRECTORY` and a zip file for su
 
 ## Incorporating Dynamic World Labels
 
-* [Instructions](DW/instructions.md)
+* [Data Preparation Instructions](DW/instructions.md)
 
 The code resides in `DW` directory. The instruction to run the codes are as follows: 
 
