@@ -27,7 +27,7 @@ To perform EDA on the data, modify paths in notebooks under `EDA/`, then run `ED
 
 ## Training and Evaluation
 
-In the following order, you can run codes for training and evaluating models, including the ensemble model, in `Main_verXX.ipynb` on Google Colab with an A-100 40GB GPU. If you want to run them on another environment including GPU type, you need to modify codes in the 4th and 5th cells mainly (also one in the 7th cell if needed).
+In the following order, you can run codes for training and evaluating models, including the ensemble model, in `Main_ver15.ipynb` on Google Colab with an A-100 40GB GPU. If you want to run them on another environment including GPU type, you need to modify codes in the 4th and 5th cells mainly (also one in the 7th cell if needed)
 
 1. Change the path of `MAIN_DIRECTORY` in the 5th cell
 
@@ -39,7 +39,7 @@ In the following order, you can run codes for training and evaluating models, in
 
 5. Do a. or b.
 
-    a. If you want to train and evaluate a single model not an ensemble model, including the chained model, set `TRAIN_ENSEMBLE_FLAG = False`
+    a. If you want to train and evaluate a single model not an ensemble model, including the chained model, set `TRAIN_ENSEMBLE_FLAG = False` and `EVALUATE_ENSEMBLE_FLAG = False`
 
     b. If you want to train an ensemble model, set `TRAIN_ENSEMBLE_FLAG = True`, `ENSEMBLE_ID = 0`, and `EVALUATE_ENSEMBLE_FLAG = False`
 
@@ -53,7 +53,7 @@ In the following order, you can run codes for training and evaluating models, in
 
 10. (Only for ensemble model) Run all the codes
 
-You can get result images in your `OUTPUT_IMAGE_DIRECTORY` and a zip file for submission to Codalab to calculate test IoUs in your `CODALAB_SUBMISSION_ZIP_DIRECTORY`. The result files are named `OUTPUT_FILES_NAME` for single models and `OUTPUT_FILES_NAME + '_ENS_EVAL_M' + str(NUM_ENSEMBLE)` for ensemble models. Also, `OUTPUT_FILES_NAME + '_ENS_EVAL_M' + str(NUM_ENSEMBLE) + '_ex'` denotes the files are for the model of `ENSEMBLE_ID = 0`
+You can get result images in your `OUTPUT_DIRECTORY` and a zip file for submission to Codalab to calculate test IoUs in your `CODALAB_SUBMISSION_ZIP_DIRECTORY`. The result files are named `OUTPUT_FILES_NAME` for single models and `OUTPUT_FILES_NAME + '_ENS_EVAL_M' + str(NUM_ENSEMBLE)` for ensemble models. Also, `OUTPUT_FILES_NAME + '_ENS_EVAL_M' + str(NUM_ENSEMBLE) + '_ex'` denotes the files are for the model of `ENSEMBLE_ID = 0`
 
 ## Incorporating Dynamic World Labels
 
