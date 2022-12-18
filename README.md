@@ -16,7 +16,7 @@ Establish a semantic segmentation model in a specific study area describing land
 
 * [Poster](pdfs/Poster.pdf)
 
-* Final Report
+* [Final Report](pdfs/final_report.pdf)
 
 * [Reference Paper](pdfs/reference_paper.pdf)
 
