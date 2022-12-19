@@ -2,7 +2,8 @@
 
 ## Project Objective
 
-Establish a semantic segmentation model in a specific study area describing land cover change between two consecutive time points (such as landcover in year 2022 vs. year 2017). Detect the loss or gain of “tree canopy” land cover class.
+Establish a semantic segmentation model to estimate high-resolution (1m / pixel) land cover classes given high resolution imagery and low resolution (30m / pixel) label data in a study area, the state of Maryland, USA, for describing land cover change between two time points. Detect the loss or gain of the four target land cover class, Water, Tree Canopy, Low Vegetation, and Impervious, during the time period
+
 
 ## Data
 
@@ -16,7 +17,7 @@ Establish a semantic segmentation model in a specific study area describing land
 
 * [Poster](pdfs/Poster.pdf)
 
-* Final Report
+* [Final Report](pdfs/final_report.pdf)
 
 * [Reference Paper](pdfs/reference_paper.pdf)
 
@@ -89,7 +90,7 @@ You need to modify the links to the model you trained. You can specify `SPL_WH`,
 - Dr. Saba Rahimi from J.P. Morgan
 
 ###  CA:
-- Katie Jooyoung Kim
+- Cathy Li
 
 ###  Instructor:
-- Vivian S. Zhang
+- Adam S. Kelleher
