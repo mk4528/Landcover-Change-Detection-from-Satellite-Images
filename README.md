@@ -4,6 +4,53 @@
 
 Establish a semantic segmentation model to estimate high-resolution (1m / pixel) land cover classes given high resolution imagery and low resolution (30m / pixel) label data in a study area, the state of Maryland, USA, for describing land cover change between two time points. Detect the loss or gain of the four target land cover class, Water, Tree Canopy, Low Vegetation, and Impervious, during the time period
 
+## Environment Setup
+
+Below is an example of installing necessary packages on Ubuntu to run the current repo
+
+Example System Info
+- System: Ubuntu 20.04
+- CUDA: 12.1
+
+Before we start, make sure GPU driver and CUDA is installed
+```
+nvidia-smi
+nvcc -V
+```
+
+First, create a virtual environment 
+```
+conda create -n exp python=3.8
+conda activate exp
+cond activate exp
+pip install --upgrade pip
+```
+
+Install PyTorch based on your Nvidia driver and CUDA version, for example, 
+to install PyTorch with CUDA 11.8
+```
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+Verify PyTorch installation
+```
+import torch
+x = torch.rand(5, 3)
+print(x)
+torch.cuda.is_available()
+```
+
+Install other necessary packages
+```
+pip install rasterio pandas matplotlib
+pip install git+https://github.com/qubvel/segmentation_models.pytorch
+conda install skimage seaborn geopandas
+```
+
+Install GDAL
+```
+conda install -c conda-forge gdal
+```
 
 ## Data
 
